@@ -34,11 +34,6 @@ int main(int argc, FAR char *argv[])
 
   printf("Init done!\n");
 
-  struct pkt_t pkt = {
-    .id = 245,
-    .msg = "marco, azz"
-  };
-
   while(true) {
    ret = write(fd, "\xf5Marco, hi!", 11);
    if (ret < 0)
