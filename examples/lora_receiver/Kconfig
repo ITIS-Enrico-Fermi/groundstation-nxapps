@@ -1,0 +1,25 @@
+
+config CANSAT_APPS_LORA_RECEIVER
+	tristate "RECEIVER RFM95 character driver"
+	default y
+	---help---
+		Enable the lora_RECEIVER app
+
+if CANSAT_APPS_LORA_RECEIVER
+
+config CANSAT_APPS_LORA_RECEIVER_PROGNAME
+	string "Program name"
+	default "lora_RECEIVER"
+	---help---
+		This is the name of the program that will be use when the NSH ELF
+		program is installed.
+
+config CANSAT_APPS_LORA_RECEIVER_PRIORITY
+	int "lora_RECEIVER task priority"
+	default 100
+
+config CANSAT_APPS_LORA_RECEIVER_STACKSIZE
+	int "lora_RECEIVER stack size"
+	default 2048
+
+endif
