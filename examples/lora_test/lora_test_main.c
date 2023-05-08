@@ -11,6 +11,7 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 #include "nuttx/rf/rfm95.h"
 
 #define DEV_NAME "/dev/radio0"
@@ -21,21 +22,22 @@ int main(int argc, FAR char *argv[])
   printf("RFM95 driver test app\n");
 
   int fd = open(DEV_NAME, O_RDWR);
-  if (fd < 0)
-    {
-      int errcode = errno;
-      printf("ERROR: Failed to open device %s: %d\n", DEV_NAME, errcode);
-    }
+  if (fd < 0) {
+    int errcode = errno;
+    printf("ERROR: Failed to open device %s: %d\n", DEV_NAME, errcode);
+  }
 
   ret = ioctl(fd, RFM95_IOCTL_INIT, 0);
-  if (ret < 0)
-    {
-      printf("failed to change init: %d!\n", ret);
-    }
+  if (ret < 0) {
+    printf("failed to change init: %d!\n", ret);
+  }
 
   printf("Init done!\n");
 
-  char msg[5] = {"Ciao!"};
+  struct pkt_t pkt = {
+    .id = 245,
+    .msg = "marco, azz"
+  };
 
   while(true) {
    ret = write(fd, "\xf5Marco, hi!", 11);
@@ -44,8 +46,8 @@ int main(int argc, FAR char *argv[])
          printf("failed to send message: %d!\n", ret);
       }
 
-   printf("Message sent!\n");
-   sleep(1);
+    printf("Message sent!\n");
+    sleep(1);
   }
 
   close(fd);
