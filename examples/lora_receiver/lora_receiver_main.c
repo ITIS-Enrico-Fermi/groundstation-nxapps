@@ -6,15 +6,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include "nuttx/rf/rfm95.h"
+#include "flight_senutils.h"
 
 #define DEV_NAME "/dev/radio0"
 
 #pragma pack 1
-struct pkt_t {
-  uint8_t id;
-  char msg[255];
-} pkt;
-
+struct lora_packet pkt;
 size_t pkt_len;
 
 
@@ -37,13 +34,34 @@ int main(int argc, FAR char *argv[]) {
   printf("Init done!\n");
 
   while(true) {
-    pkt_len = read(fd, &pkt, sizeof(struct pkt_t));
+    pkt_len = read(fd, &pkt, sizeof(struct lora_packet));
 
     printf("Received packet of %d bytes\n", pkt_len);
 
-    printf("%d, %s\n", pkt.id, pkt.msg);
+    printf(
+      "{"
+        "'pressure': %.2f,"
+        "'accel': {"
+          "'x': %d,"
+          "'y': %d,"
+          "'z': %d,"
+        "}, 'roto': {"
+          "'x': %d,"
+          "'y': %d,"
+          "'z': %d,"
+        "}, 'lat': %.5f,"
+        "'lon': %.5f,"
+        "'uv': %d,"
+        "'counter': %d"
+      "}\n",
+      pkt.pressure,
+      pkt.gyro.accel.x, pkt.gyro.accel.y, pkt.gyro.accel.z,
+      pkt.gyro.roto.x, pkt.gyro.roto.y, pkt.gyro.roto.z,
+      pkt.gps.latitude, pkt.gps.longitude,
+      pkt.uv, pkt.counter
+    );
 
-    usleep(500000);
+    usleep(100000);
   }
 
   close(fd);
